@@ -1,0 +1,7 @@
+version: 2.1
+
+description: Common CircleCI tasks for the WiX toolset.
+
+display:
+  source_url: https://github.com/amdprophet/wixtoolset-orb
+  home_url: https://wixtoolset.org/

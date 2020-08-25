@@ -1,0 +1,81 @@
+description: Install the WiX Toolset. Supports windows/amd64.
+parameters:
+  installer_url:
+    description: The URL of the WiX installer. 
+    type: string
+    default: https://wixtoolset.org/downloads/v3.14.0.4118/wix314.exe
+  expected_version:
+    description: The version of WiX expected to be installed.
+    type: string
+    default: 3.14.0
+  expected_path:
+    description: The path to find the WiX installation in.
+    type: string
+    default: 'c:\Program Files (x86)\WiX Toolset v3.14'
+  cache:
+    description: Whether or not to cache the installation.
+    type: boolean
+    default: true
+  cache-key:
+    description: |
+      String to use in cache key. Typically overridden when needed to bust
+      cache.
+    type: string
+    default: "v1"
+steps:
+  - when:
+      condition:
+        equal: [<< parameters.cache >>, true]
+      steps:
+        - run:
+            name: Prep cache restore
+            shell: powershell.exe
+            command: New-Item -ItemType Directory -Force -Path "<< parameters.expected_path >>"
+        - restore_cache:
+            keys:
+              - wix-installation-<< parameters.cache-key >>-<< parameters.expected_version >>-{{ arch }}
+  - run:
+      name: Add WiX to PATH (powershell.exe)
+      shell: powershell.exe
+      command: |
+        [Environment]::SetEnvironmentVariable("Path", $env:PATH + `
+        ";<< parameters.expected_path >>\bin", "Machine")
+  - run:
+      name: Add WiX to PATH (bash.exe)
+      shell: bash.exe -eo pipefail
+      command: |
+        wix_path="$(cygpath '<< parameters.expected_path >>\bin')"
+        echo "export PATH=\"$PATH:$wix_path\"" >> $BASH_ENV
+  - run:
+      name: Install WiX
+      shell: powershell.exe
+      command: |
+        If (Get-Command candle.exe -errorAction SilentlyContinue) {
+          If (candle.exe -h | Select-String -Pattern "<< parameters.expected_version >>") {
+            echo "WiX is already installed, skipping download."
+            exit 0
+          } Else {
+            echo "WiX is already installed but it is the wrong version."
+          }
+        }
+
+        Remove-Item -Path "<< parameters.expected_path >>" -Recurse
+        echo "Downloading the requested version of WiX."
+        curl.exe -sSLo wix.exe << parameters.installer_url >>
+        echo "Installing the requested version of WiX."
+        .\wix.exe /install /quiet /norestart
+  - run:
+      name: Verify WiX installation
+      shell: powershell.exe
+      command: |
+        echo $env:Path
+        ls "<< parameters.expected_path >>\bin"
+        candle.exe -h
+  - when:
+      condition:
+        equal: [<< parameters.cache >>, true]
+      steps:
+        - save_cache:
+            key: wix-installation-<< parameters.cache-key >>-<< parameters.expected_version >>-{{ arch }}
+            paths:
+              - << parameters.expected_path >>
