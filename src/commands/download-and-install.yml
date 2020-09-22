@@ -1,0 +1,4 @@
+description: Download and install the WiX Toolset. Supports windows/amd64.
+steps:
+  - download
+  - install

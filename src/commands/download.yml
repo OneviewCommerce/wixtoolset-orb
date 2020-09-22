@@ -1,0 +1,42 @@
+description: Download the WiX Toolset installer. Supports windows/amd64.
+parameters:
+  installer_url:
+    description: The URL of the WiX installer. 
+    type: string
+    default: https://wixtoolset.org/downloads/v3.14.0.4118/wix314.exe
+  destination:
+    description: The path to save the installer to.
+    type: string
+    default: '$HOME\wix.exe'
+  cache:
+    description: Whether or not to cache the installer.
+    type: boolean
+    default: true
+  cache-key:
+    description: |
+      String to use in cache key. Typically overridden when needed to bust
+      cache.
+    type: string
+    default: "v1"
+steps:
+  - when:
+      condition:
+        equal: [<< parameters.cache >>, true]
+      steps:
+        - restore_cache:
+            keys:
+              - wix-installer-<< parameters.cache-key >>-<< parameters.installer_url >>-{{ arch }}
+  - run:
+      name: Download WiX Toolset
+      shell: powershell.exe
+      command: curl.exe -sSLo wix.exe << parameters.installer_url >>
+  - run:
+      name: Download WiX Toolset
+      shell: powershell.exe
+      command: |
+        If (Test-Path << parameters.destination >> -PathType Leaf) {
+          echo "WiX installer has already been downloaded."
+          exit 0
+        }
+        echo "Downloading the WiX Toolset installer."
+        curl.exe -sSLo << parameters.destination >> << parameters.installer_url >>
