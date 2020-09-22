@@ -21,7 +21,7 @@ parameters:
       String to use in cache key. Typically overridden when needed to bust
       cache.
     type: string
-    default: "v1"
+    default: "v2"
 steps:
   - when:
       condition:
@@ -79,3 +79,4 @@ steps:
             key: wix-installation-<< parameters.cache-key >>-<< parameters.expected_version >>-{{ arch }}
             paths:
               - << parameters.expected_path >>
+              - 'c:\Program Files (x86)\MSBuild\Microsoft\WiX'
