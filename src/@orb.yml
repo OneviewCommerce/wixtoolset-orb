@@ -1,7 +1,10 @@
 version: 2.1
 
-description: Common CircleCI tasks for the WiX toolset.
+description: >
+  Common CircleCI tasks for the WiX toolset. Fork of https://circleci.com/developer/orbs/orb/sensu/wixtoolset
 
+# This information will be displayed in the orb registry and is not mandatory.
 display:
-  source_url: https://github.com/sensu/wixtoolset-orb
-  home_url: https://wixtoolset.org/
+  source_url: "https://github.com/OneviewCommerce/wixtoolset-orb"
+  home_url: "https://github.com/OneviewCommerce/wixtoolset-orb"
+
