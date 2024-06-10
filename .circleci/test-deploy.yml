@@ -4,6 +4,7 @@ orbs:
   # Reference your orb's jobs and commands below as they will exist when built.
   orb-tools: circleci/orb-tools@12.0
   win: circleci/windows@2.2.0
+  wix: oneviewcommerce/wixtoolset-orb@dev:ci/orb-init
   # The orb definition is intentionally not included here. It will be injected into the pipeline.
   <orb-name>: {}
 
@@ -30,7 +31,7 @@ jobs:
     steps:
       - checkout
       # Run your orb's commands to validate them.
-      - wixtoolset-orb/download-and-install
+      - wix/download-and-install
 workflows:
   test-deploy:
     jobs:
@@ -42,7 +43,7 @@ workflows:
       - orb-tools/pack:
           filters: *release-filters
       - orb-tools/publish:
-          orb_name: oneviewcommerce/wixtoolset-orb	
+          orb_name: oneviewcommerce/wixtoolset-orb
           vcs_type: << pipeline.project.type >>
           pub_type: production
           # Ensure this job requires all test jobs and the pack job.
