@@ -1,9 +1,9 @@
 description: Download the WiX Toolset installer. Supports windows/amd64.
 parameters:
   installer_url:
-    description: The URL of the WiX installer. 
+    description: The URL of the WiX installer.
     type: string
-    default: https://wixtoolset.org/downloads/v3.14.0.4118/wix314.exe
+    default: https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314.exe
   destination:
     description: The path to save the installer to.
     type: string
